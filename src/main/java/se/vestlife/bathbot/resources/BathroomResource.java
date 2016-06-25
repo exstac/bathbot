@@ -32,7 +32,7 @@ public class BathroomResource {
   public Stream<Route<AsyncHandler<Response<ByteString>>>> routes() {
     return Stream.of(
         Route.async("PUT", "/bathroom/<floor>", ctx -> registerDevice(ctx.pathArgs().get("floor"), ctx)),
-        Route.async("POST", "/bathroom/<id>", ctx -> update(ctx.pathArgs().get("id"))),
+        Route.async("POST", "/bathroom", ctx -> update(ctx)),
         Route.async("POST", "/bathrooms", autoSerialize(ctx -> listDevices()))
     );
   }
@@ -41,8 +41,11 @@ public class BathroomResource {
     return CompletableFuture.completedFuture(Response.forPayload(state));
   }
 
-  private CompletionStage<Response<ByteString>> update(String deviceId) {
-    return null;
+  private CompletionStage<Response<ByteString>> update(RequestContext ctx) {
+    final Optional<ByteString> payload = ctx.request().payload();
+    final String parameter = payload.isPresent() ? payload.get().utf8() : "no payload";
+    System.out.println("POST /bathroom " + parameter);
+    return CompletableFuture.completedFuture(Response.ok());
   }
 
   private CompletionStage<Response<ByteString>> registerDevice(String deviceId, RequestContext ctx) {
