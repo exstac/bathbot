@@ -1,16 +1,12 @@
 package se.vestlife.bathbot.resources;
 
+import com.spotify.apollo.Request;
 import com.spotify.apollo.RequestContext;
 import com.spotify.apollo.Response;
 import com.spotify.apollo.route.AsyncHandler;
 import com.spotify.apollo.route.Route;
 
-import se.vestlife.bathbot.model.Bathroom;
-import se.vestlife.bathbot.model.BathroomState;
-
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -23,7 +19,7 @@ import static com.spotify.apollo.route.Middlewares.autoSerialize;
 
 public class BathroomResource {
 
-  private final Map<String, BathroomState> state;
+  private final Map<Integer, BathroomState> state;
 
   public BathroomResource() {
     state = new HashMap<>();
@@ -31,13 +27,13 @@ public class BathroomResource {
 
   public Stream<Route<AsyncHandler<Response<ByteString>>>> routes() {
     return Stream.of(
-        Route.async("PUT", "/bathroom/<floor>", ctx -> registerDevice(ctx.pathArgs().get("floor"), ctx)),
-        Route.async("POST", "/bathroom", ctx -> update(ctx)),
-        Route.async("POST", "/bathrooms", autoSerialize(ctx -> listDevices()))
+        Route.async("PUT", "/bathroom", this::register),
+        Route.async("POST", "/bathroom", this::update),
+        Route.async("POST", "/bathrooms", autoSerialize(ctx -> listBathrooms()))
     );
   }
 
-  private CompletionStage<Response<Map<String, BathroomState>>> listDevices() {
+  private CompletionStage<Response<Map<Integer, BathroomState>>> listBathrooms() {
     return CompletableFuture.completedFuture(Response.forPayload(state));
   }
 
@@ -48,8 +44,10 @@ public class BathroomResource {
     return CompletableFuture.completedFuture(Response.ok());
   }
 
-  private CompletionStage<Response<ByteString>> registerDevice(String deviceId, RequestContext ctx) {
-    Optional<ByteString> payload = ctx.request().payload();
-    return null;
+  private CompletionStage<Response<ByteString>> register(RequestContext ctx) {
+    Request request = ctx.request();
+    Optional<ByteString> payload = request.payload();
+
+    return CompletableFuture.completedFuture(Response.ok());
   }
 }
