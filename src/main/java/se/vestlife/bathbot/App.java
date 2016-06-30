@@ -15,6 +15,8 @@ public final class App {
       ObjectMapper objectMapper = new ObjectMapper();
       BathroomResource bathroomResource = new BathroomResource();
 
+      final SlackClient slackClient = new SlackClient(environment.client());
+
       environment.routingEngine()
           .registerRoutes(bathroomResource.routes())
           .registerRoute(Route.sync("GET", "/ping", rc -> Response.ok()));

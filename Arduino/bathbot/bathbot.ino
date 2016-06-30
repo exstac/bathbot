@@ -42,8 +42,6 @@ void setup() {
   delay(1000);
 }
 
-//const char* host = "10.25.12.52";
-const char* host = "192.168.1.22";
 int secondsBusy = 0;
 int msBusy = 0;
 int state = BR_FREE;
